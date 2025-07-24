@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -164,9 +165,9 @@ const RetourSansBsScreen: React.FC = () => {
           onValueChange={(val) => handleChange(key, val)}
         >
           <Picker.Item label={`-- Sélectionner ${label.toLowerCase()} --`} value={null} />
-          {data.map((item) => (
+          {data.map((item, index) => (
             <Picker.Item
-              key={item[valueProp]}
+              key={`${key}-${item[valueProp] ?? index}`} // clé unique même si valeur manquante
               label={item[labelProp]}
               value={item[valueProp]}
             />
@@ -177,60 +178,62 @@ const RetourSansBsScreen: React.FC = () => {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView
-        style={styles.scrollContainer}
-        contentContainerStyle={styles.scroll}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={styles.inner}>
-          <Title style={styles.title}>Retour Sans Bon</Title>
+    <KeyboardAvoidingView>
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView
+          style={styles.scrollContainer}
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.inner}>
+            <Title style={styles.title}>Retour Sans Bon</Title>
 
-          {loadingData ? (
-            <ActivityIndicator size="large" color="#007AFF" />
-          ) : (
-            <Card style={styles.card}>
-              <Card.Content>
-                {renderPicker("Véhicule *", "id_vehicule", vehiculeList, "immatriculation", "id_vehicule")}
-                {renderPicker("Chauffeur *", "id_chauffeur", chauffeurList, "nom", "id_chauffeur")}
-                {renderPicker("Motif *", "id_motif", motifList, "nom_motif_demande", "id_motif")}
-                {renderPicker("Service Demandeur *", "id_demandeur", serviceList, "nom_service", "id_service")}
-                {renderPicker("Client", "id_client", clientList, "nom", "id_client")}
-                {renderPicker("Destination", "id_destination", destinationList, "nom_destination", "id_destination")}
+            {loadingData ? (
+              <ActivityIndicator size="large" color="#007AFF" />
+            ) : (
+              <Card style={styles.card}>
+                <Card.Content>
+                  {renderPicker("Véhicule *", "id_vehicule", vehiculeList, "immatriculation", "id_vehicule")}
+                  {renderPicker("Chauffeur *", "id_chauffeur", chauffeurList, "nom", "id_chauffeur")}
+                  {renderPicker("Motif *", "id_motif", motifList, "nom_motif_demande", "id_motif")}
+                  {renderPicker("Service Demandeur *", "id_demandeur", serviceList, "nom_service", "id_service")}
+                  {renderPicker("Client", "id_client", clientList, "nom", "id_client")}
+                  {renderPicker("Destination", "id_destination", destinationList, "nom_destination", "id_destination")}
 
-                <Text style={styles.label}>Personnes à bord</Text>
-                <TextInput
-                  mode="outlined"
-                  placeholder="Saisir les noms"
-                  value={form.personne_bord}
-                  onChangeText={(val) => handleChange("personne_bord", val)}
-                  style={styles.input}
-                />
+                  <Text style={styles.label}>Personnes à bord</Text>
+                  <TextInput
+                    mode="outlined"
+                    placeholder="Saisir les noms"
+                    value={form.personne_bord}
+                    onChangeText={(val) => handleChange("personne_bord", val)}
+                    style={styles.input}
+                  />
 
-                <Text style={styles.label}>Autorisé par *</Text>
-                <TextInput
-                  mode="outlined"
-                  placeholder="Nom du chef"
-                  value={form.autorise_par}
-                  onChangeText={(val) => handleChange("autorise_par", val)}
-                  style={styles.input}
-                />
+                  <Text style={styles.label}>Autorisé par *</Text>
+                  <TextInput
+                    mode="outlined"
+                    placeholder="Nom du chef"
+                    value={form.autorise_par}
+                    onChangeText={(val) => handleChange("autorise_par", val)}
+                    style={styles.input}
+                  />
 
-                <Button
-                  mode="contained"
-                  onPress={handleSubmit}
-                  loading={loadingData}
-                  disabled={loadingData}
-                  style={styles.button}
-                >
-                  Soumettre
-                </Button>
-              </Card.Content>
-            </Card>
-          )}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+                  <Button
+                    mode="contained"
+                    onPress={handleSubmit}
+                    loading={loadingData}
+                    disabled={loadingData}
+                    style={styles.button}
+                  >
+                    Soumettre
+                  </Button>
+                </Card.Content>
+              </Card>
+            )}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 
