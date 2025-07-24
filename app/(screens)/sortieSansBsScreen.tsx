@@ -7,12 +7,15 @@ import {
   postSortieVehiculeExceptionnel
 } from "@/services/charroiService";
 import { getClient } from "@/services/clientService";
+import { AntDesign } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   Platform,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -71,6 +74,7 @@ const SortieSansBsScreen: React.FC = () => {
   const [serviceList, setServiceList] = useState<Service[]>([]);
   const [destinationList, setDestinationList] = useState<Destination[]>([]);
   const [clientList, setClientList] = useState<Client[]>([]);
+  const router = useRouter();
 
   const [form, setForm] = useState<FormState>({
     id_vehicule: null,
@@ -128,7 +132,7 @@ const SortieSansBsScreen: React.FC = () => {
       Alert.alert("Champs requis", "Veuillez remplir tous les champs obligatoires (*)");
       return;
     }
-    
+
     try {
       setLoadingData(true);
       await postSortieVehiculeExceptionnel({
@@ -182,6 +186,10 @@ const SortieSansBsScreen: React.FC = () => {
         contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"
       >
+        <Pressable style={styles.backButton} onPress={() => router.back()}>
+          <AntDesign name="arrowleft" size={24} color="#007AFF" />
+        </Pressable>
+
         <View style={styles.inner}>
           <Title style={styles.title}>Sortie Sans Bon</Title>
 
@@ -236,6 +244,12 @@ const SortieSansBsScreen: React.FC = () => {
 export default SortieSansBsScreen;
 
 const styles = StyleSheet.create({
+  backButton: {
+  marginBottom: 16,
+  marginTop: 10,
+  paddingLeft: 4,
+  alignSelf: "flex-start",
+},
   safeArea: {
     flex: 1,
     backgroundColor: "#f7f9fc",

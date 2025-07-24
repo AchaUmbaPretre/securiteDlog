@@ -23,6 +23,8 @@ export const getChauffeur = () => fetchData('chauffeur');
 export const getServiceDemandeur = () => fetchData('serviceDemadeur');
 export const getMotif = () => fetchData('motif');
 export const getDestination = () => fetchData('destination');
+export const getRetourVehicule = () => fetchData('retour_vehicule');
+export const getSortieVehicule = () => fetchData('sortie_vehicule');
 
 /**
  * Envoie les données de retour exceptionnel d'un véhicule
@@ -48,6 +50,31 @@ export const postSortieVehiculeExceptionnel = async (
     return response;
   } catch (error) {
     console.error('Erreur lors de l\'envoi du sortie véhicule exceptionnel :', error);
+    throw error;
+  }
+};
+
+
+export const postSortieVehicule = async (
+  data: Record<string, any>
+): Promise<AxiosResponse<any>> => {
+  try {
+    const response = await axios.post(`${BASE_URL}/sortie_vehicule`, data);
+    return response;
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi du sortie véhicule :', error);
+    throw error;
+  }
+};
+
+export const postRetourVehicule = async (
+  data: Record<string, any>
+): Promise<AxiosResponse<any>> => {
+  try {
+    const response = await axios.post(`${BASE_URL}/retour_vehicule`, data);
+    return response;
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi du retour véhicule :', error);
     throw error;
   }
 };
