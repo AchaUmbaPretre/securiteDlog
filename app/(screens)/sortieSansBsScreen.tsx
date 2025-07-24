@@ -4,7 +4,7 @@ import {
   getMotif,
   getServiceDemandeur,
   getVehiculeDispo,
-  postRetourVehiculeExceptionnel,
+  postSortieVehiculeExceptionnel
 } from "@/services/charroiService";
 import { getClient } from "@/services/clientService";
 import { Picker } from "@react-native-picker/picker";
@@ -35,11 +35,11 @@ interface Chauffeur {
   postnom: string;
 }
 interface Motif {
-  id_motif: number;
+  id_motif_demande: number;
   nom_motif_demande: string;
 }
 interface Service {
-  id_service: number;
+  id_service_demandeur: number;
   nom_service: string;
 }
 interface Destination {
@@ -64,7 +64,7 @@ interface FormState {
 
 const SortieSansBsScreen: React.FC = () => {
   const [loadingData, setLoadingData] = useState(false);
-  const userId = useSelector((state: any) => state.user?.currentUser?.id_utilisateur);
+  const userId = useSelector((state: any) => state.auth?.currentUser?.id_utilisateur);
   const [vehiculeList, setVehiculeList] = useState<Vehicule[]>([]);
   const [chauffeurList, setChauffeurList] = useState<Chauffeur[]>([]);
   const [motifList, setMotifList] = useState<Motif[]>([]);
@@ -118,25 +118,20 @@ const SortieSansBsScreen: React.FC = () => {
     fetchDatas();
   }, []);
 
+
   const handleChange = (name: keyof FormState, value: any) => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async () => {
-    if (!form.id_vehicule || !form.id_chauffeur || !form.id_motif || !form.id_demandeur || !form.autorise_par) {
-      Alert.alert("Champs requis", "Veuillez remplir tous les champs obligatoires (*)");
-      return;
-    }
 
     try {
       setLoadingData(true);
-      await postRetourVehiculeExceptionnel({
+      await postSortieVehiculeExceptionnel({
         ...form,
-        id_agent: userId,
-        type: "Retour",
-        mouvement_exceptionnel: 1,
+        id_agent: userId
       });
-      Alert.alert("Succès", "Retour enregistré avec succès !");
+      Alert.alert("Succès", "Sortie enregistré avec succès !");
       setForm({
         id_vehicule: null,
         id_chauffeur: null,
@@ -164,9 +159,9 @@ const SortieSansBsScreen: React.FC = () => {
           onValueChange={(val) => handleChange(key, val)}
         >
           <Picker.Item label={`-- Sélectionner ${label.toLowerCase()} --`} value={null} />
-          {data.map((item) => (
+          {data.map((item, index) => (
             <Picker.Item
-              key={item[valueProp]}
+              key={`${key}-${item[valueProp] ?? index}`} // clé unique même si valeur manquante
               label={item[labelProp]}
               value={item[valueProp]}
             />
@@ -193,8 +188,8 @@ const SortieSansBsScreen: React.FC = () => {
               <Card.Content>
                 {renderPicker("Véhicule *", "id_vehicule", vehiculeList, "immatriculation", "id_vehicule")}
                 {renderPicker("Chauffeur *", "id_chauffeur", chauffeurList, "nom", "id_chauffeur")}
-                {renderPicker("Motif *", "id_motif", motifList, "nom_motif_demande", "id_motif")}
-                {renderPicker("Service Demandeur *", "id_demandeur", serviceList, "nom_service", "id_service")}
+                {renderPicker("Motif *", "id_motif", motifList, "nom_motif_demande", "id_motif_demande")}
+                {renderPicker("Service Demandeur *", "id_demandeur", serviceList, "nom_service", "id_service_demandeur")}
                 {renderPicker("Client", "id_client", clientList, "nom", "id_client")}
                 {renderPicker("Destination", "id_destination", destinationList, "nom_destination", "id_destination")}
 

@@ -39,3 +39,15 @@ export const postRetourVehiculeExceptionnel = async (
     throw error;
   }
 };
+
+export const postSortieVehiculeExceptionnel = async (
+  data: Record<string, any>
+): Promise<AxiosResponse<any>> => {
+  try {
+    const response = await axios.post(`${BASE_URL}/sortie_vehicule_exceptionnel`, data);
+    return response;
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi du sortie véhicule exceptionnel :', error);
+    throw error;
+  }
+};

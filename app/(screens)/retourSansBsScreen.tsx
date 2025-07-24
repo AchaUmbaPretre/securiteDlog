@@ -65,7 +65,7 @@ interface FormState {
 
 const RetourSansBsScreen: React.FC = () => {
   const [loadingData, setLoadingData] = useState(false);
-  const userId = useSelector((state: any) => state.user?.currentUser?.id_utilisateur);
+  const userId = useSelector((state: any) => state.auth?.currentUser?.id_utilisateur); 
   const [vehiculeList, setVehiculeList] = useState<Vehicule[]>([]);
   const [chauffeurList, setChauffeurList] = useState<Chauffeur[]>([]);
   const [motifList, setMotifList] = useState<Motif[]>([]);
