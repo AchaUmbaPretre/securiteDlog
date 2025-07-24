@@ -18,7 +18,6 @@ const authSlice = createSlice({
     loginSuccess(state, action: PayloadAction<{ token: string; user: any }>) {
       state.token = action.payload.token;
       state.currentUser = action.payload.user;
-        console.log('User connecté:', action.payload); // 👀 vérifie les clés disponibles
       AsyncStorage.setItem('token', action.payload.token);
       AsyncStorage.setItem('user', JSON.stringify(action.payload.user));
     },

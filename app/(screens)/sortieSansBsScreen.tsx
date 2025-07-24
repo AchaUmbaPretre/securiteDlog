@@ -124,7 +124,11 @@ const SortieSansBsScreen: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-
+    if (!form.id_vehicule || !form.id_chauffeur || !form.id_motif || !form.id_demandeur || !form.autorise_par) {
+      Alert.alert("Champs requis", "Veuillez remplir tous les champs obligatoires (*)");
+      return;
+    }
+    
     try {
       setLoadingData(true);
       await postSortieVehiculeExceptionnel({

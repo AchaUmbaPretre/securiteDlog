@@ -1,8 +1,11 @@
-import { Images } from '@/assets/images';
-import { Item } from '@/components/Item';
 import RetourScreen from '@/app/(screens)/retourScreen';
 import SortieScreen from '@/app/(screens)/sortieScreen';
+import { Images } from '@/assets/images';
+import { Item } from '@/components/Item';
+import { logout } from '@/redux/authSlice';
 import { Feather } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Image,
@@ -16,12 +19,25 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 const Home = () => {
+  const user = useSelector((state: any) => state.auth?.currentUser);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
-  
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+
+  dispatch(logout());
+  await AsyncStorage.removeItem('token');
+  await AsyncStorage.removeItem('user');
+  router.replace('/login');
+};
+
+
   const openModal = (type: string) => {
     setModalType(type);
     setShowModal(true);
@@ -30,10 +46,6 @@ const Home = () => {
   const closeModal = () => {
     setShowModal(false);
     setModalType(null);
-  };
-
-  const handleLogout = () => {
-    console.log('Déconnexion');
   };
 
   const renderModalContent = () => {
@@ -55,8 +67,8 @@ const Home = () => {
           <View style={styles.profileContainer}>
             <Image source={Images.userIcon} style={styles.image} />
             <View style={styles.textContainer}>
-              <Text style={styles.name}>Acha</Text>
-              <Text style={styles.role}>Sécurité</Text>
+              <Text style={styles.name}>{user?.nom}</Text>
+              <Text style={styles.role}>{user?.role}</Text>
             </View>
           </View>
 

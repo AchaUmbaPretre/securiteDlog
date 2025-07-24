@@ -4,7 +4,7 @@ import {
   getMotif,
   getServiceDemandeur,
   getVehiculeDispo,
-  postRetourVehiculeExceptionnel,
+  postRetourVehiculeExceptionnel
 } from "@/services/charroiService";
 import { getClient } from "@/services/clientService";
 import { Picker } from "@react-native-picker/picker";
@@ -12,7 +12,6 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  KeyboardAvoidingView,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -36,11 +35,11 @@ interface Chauffeur {
   postnom: string;
 }
 interface Motif {
-  id_motif: number;
+  id_motif_demande: number;
   nom_motif_demande: string;
 }
 interface Service {
-  id_service: number;
+  id_service_demandeur: number;
   nom_service: string;
 }
 interface Destination {
@@ -65,7 +64,7 @@ interface FormState {
 
 const RetourSansBsScreen: React.FC = () => {
   const [loadingData, setLoadingData] = useState(false);
-  const userId = useSelector((state: any) => state.auth?.currentUser?.id_utilisateur); 
+  const userId = useSelector((state: any) => state.auth?.currentUser?.id_utilisateur);
   const [vehiculeList, setVehiculeList] = useState<Vehicule[]>([]);
   const [chauffeurList, setChauffeurList] = useState<Chauffeur[]>([]);
   const [motifList, setMotifList] = useState<Motif[]>([]);
@@ -119,6 +118,7 @@ const RetourSansBsScreen: React.FC = () => {
     fetchDatas();
   }, []);
 
+
   const handleChange = (name: keyof FormState, value: any) => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -134,8 +134,8 @@ const RetourSansBsScreen: React.FC = () => {
       await postRetourVehiculeExceptionnel({
         ...form,
         id_agent: userId,
-        type: "Retour",
-        mouvement_exceptionnel: 1,
+        type: 'Retour',
+        mouvement_exceptionnel: 1
       });
       Alert.alert("Succès", "Retour enregistré avec succès !");
       setForm({
@@ -150,7 +150,7 @@ const RetourSansBsScreen: React.FC = () => {
       });
       fetchDatas();
     } catch (error) {
-      Alert.alert("Erreur", "Impossible d'enregistrer le retour.");
+      Alert.alert("Erreur", "Impossible d'enregistrer la sortie.");
     } finally {
       setLoadingData(false);
     }
@@ -178,62 +178,60 @@ const RetourSansBsScreen: React.FC = () => {
   );
 
   return (
-    <KeyboardAvoidingView>
-      <SafeAreaView style={styles.safeArea}>
-        <ScrollView
-          style={styles.scrollContainer}
-          contentContainerStyle={styles.scroll}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.inner}>
-            <Title style={styles.title}>Retour Sans Bon</Title>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.scroll}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.inner}>
+          <Title style={styles.title}>Retour Sans Bon</Title>
 
-            {loadingData ? (
-              <ActivityIndicator size="large" color="#007AFF" />
-            ) : (
-              <Card style={styles.card}>
-                <Card.Content>
-                  {renderPicker("Véhicule *", "id_vehicule", vehiculeList, "immatriculation", "id_vehicule")}
-                  {renderPicker("Chauffeur *", "id_chauffeur", chauffeurList, "nom", "id_chauffeur")}
-                  {renderPicker("Motif *", "id_motif", motifList, "nom_motif_demande", "id_motif")}
-                  {renderPicker("Service Demandeur *", "id_demandeur", serviceList, "nom_service", "id_service")}
-                  {renderPicker("Client", "id_client", clientList, "nom", "id_client")}
-                  {renderPicker("Destination", "id_destination", destinationList, "nom_destination", "id_destination")}
+          {loadingData ? (
+            <ActivityIndicator size="large" color="#007AFF" />
+          ) : (
+            <Card style={styles.card}>
+              <Card.Content>
+                {renderPicker("Véhicule *", "id_vehicule", vehiculeList, "immatriculation", "id_vehicule")}
+                {renderPicker("Chauffeur *", "id_chauffeur", chauffeurList, "nom", "id_chauffeur")}
+                {renderPicker("Motif *", "id_motif", motifList, "nom_motif_demande", "id_motif_demande")}
+                {renderPicker("Service Demandeur *", "id_demandeur", serviceList, "nom_service", "id_service_demandeur")}
+                {renderPicker("Client", "id_client", clientList, "nom", "id_client")}
+                {renderPicker("Provenance", "id_destination", destinationList, "nom_destination", "id_destination")}
 
-                  <Text style={styles.label}>Personnes à bord</Text>
-                  <TextInput
-                    mode="outlined"
-                    placeholder="Saisir les noms"
-                    value={form.personne_bord}
-                    onChangeText={(val) => handleChange("personne_bord", val)}
-                    style={styles.input}
-                  />
+                <Text style={styles.label}>Personnes à bord</Text>
+                <TextInput
+                  mode="outlined"
+                  placeholder="Saisir les noms"
+                  value={form.personne_bord}
+                  onChangeText={(val) => handleChange("personne_bord", val)}
+                  style={styles.input}
+                />
 
-                  <Text style={styles.label}>Autorisé par *</Text>
-                  <TextInput
-                    mode="outlined"
-                    placeholder="Nom du chef"
-                    value={form.autorise_par}
-                    onChangeText={(val) => handleChange("autorise_par", val)}
-                    style={styles.input}
-                  />
+                <Text style={styles.label}>Autorisé par *</Text>
+                <TextInput
+                  mode="outlined"
+                  placeholder="Nom du chef"
+                  value={form.autorise_par}
+                  onChangeText={(val) => handleChange("autorise_par", val)}
+                  style={styles.input}
+                />
 
-                  <Button
-                    mode="contained"
-                    onPress={handleSubmit}
-                    loading={loadingData}
-                    disabled={loadingData}
-                    style={styles.button}
-                  >
-                    Soumettre
-                  </Button>
-                </Card.Content>
-              </Card>
-            )}
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+                <Button
+                  mode="contained"
+                  onPress={handleSubmit}
+                  loading={loadingData}
+                  disabled={loadingData}
+                  style={styles.button}
+                >
+                  Soumettre
+                </Button>
+              </Card.Content>
+            </Card>
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -252,7 +250,6 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   inner: {
-    paddingTop: 24,
     paddingHorizontal: 16,
   },
   title: {
