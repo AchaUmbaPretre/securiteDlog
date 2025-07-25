@@ -1,5 +1,5 @@
 import { getSortieVisiteur, putSortieVisiteur } from '@/services/charroiService';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Feather } from '@expo/vector-icons';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import {
@@ -7,6 +7,7 @@ import {
   Alert,
   FlatList,
   Modal,
+  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -106,8 +107,15 @@ const VisiteurSortieScreen: React.FC = () => {
         animationType="slide"
         onRequestClose={() => setModalVisible(false)}
       >
-        <VisiteurEntreeScreen
-        />
+        <View style={{ alignItems: 'flex-end', padding: 15 }}>
+          <TouchableOpacity onPress={()=> setModalVisible(false)}>
+            <Feather name="x" size={28} color="#000" />
+          </TouchableOpacity>
+        </View>
+        <SafeAreaView style={{ flex: 1 }}>
+          <VisiteurEntreeScreen/>  
+        </SafeAreaView>
+
       </Modal>
     </View>
   );
