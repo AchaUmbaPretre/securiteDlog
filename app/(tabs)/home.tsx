@@ -20,6 +20,10 @@ import {
   View
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import VisiteurEntreeScreen from '../(screens)/visiteurEntreeScreen';
+import VisiteurPietonEntree from '../(screens)/visiteurPietonEntree';
+import VisiteurPietonSortie from '../(screens)/visiteurPietonSortie';
+import VisiteurSortieScreen from '../(screens)/visiteurSortieScreen';
 
 
 const Home = () => {
@@ -54,6 +58,14 @@ const Home = () => {
         return <SortieScreen />;
       case 'retour':
         return <RetourScreen />;
+      case 'visiteurEntree':
+        return <VisiteurEntreeScreen />;
+      case 'visiteurSortie':
+        return <VisiteurSortieScreen />;
+      case 'visiteurPietonEntree':
+        return <VisiteurPietonEntree />;
+      case 'visiteurPietonSortie':
+        return <VisiteurPietonSortie />;
       default:
         return null;
     }
@@ -103,26 +115,26 @@ const Home = () => {
         </View>
       </ScrollView>
 
-     <Modal
-  animationType="slide"
-  transparent={false}
-  visible={showModal}
-  onRequestClose={closeModal} // Android back button
->
-  <SafeAreaView style={{ flex: 1 }}>
-    {/* Bouton de fermeture */}
-    <View style={{ alignItems: 'flex-end', padding: 15 }}>
-      <TouchableOpacity onPress={closeModal}>
-        <Feather name="x" size={28} color="#000" />
-      </TouchableOpacity>
-    </View>
+    <Modal
+      animationType="slide"
+      transparent={false}
+      visible={showModal}
+      onRequestClose={closeModal}
+    >
+      <SafeAreaView style={{ flex: 1 }}>
+        {/* Bouton de fermeture */}
+        <View style={{ alignItems: 'flex-end', padding: 15 }}>
+          <TouchableOpacity onPress={closeModal}>
+            <Feather name="x" size={28} color="#000" />
+          </TouchableOpacity>
+        </View>
 
-    {/* Contenu du modal */}
-    <View style={{ flex: 1 }}>
-      {renderModalContent()}
-    </View>
-  </SafeAreaView>
-</Modal>
+        {/* Contenu du modal */}
+        <View style={{ flex: 1 }}>
+          {renderModalContent()}
+        </View>
+      </SafeAreaView>
+    </Modal>
 
     </SafeAreaView>
   );
