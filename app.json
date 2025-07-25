@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Gtm",
-    "slug": "GTM",
+    "name": "GTM Sécurité",
+    "slug": "gtm-securite",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/gtm.png",
-    "scheme": "securiteandroid",
+    "scheme": "gtmsecurite",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

@@ -143,7 +143,7 @@ const VisiteurEntreeScreen = () => {
         type: 'image/jpeg',
       } as any);
     }
-    console.log(formData)
+    
     try {
       setLoading(true);
       await postVisiteurVehicule(formData);

@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  Alert,
   Image,
   Modal,
   Platform,
@@ -34,14 +35,39 @@ const Home = () => {
   const [modalType, setModalType] = useState<string | null>(null);
   const dispatch = useDispatch();
   const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleLogout = async () => {
 
-  dispatch(logout());
-  await AsyncStorage.removeItem('token');
-  await AsyncStorage.removeItem('user');
-  router.replace('/login');
-};
+    const handleLogout = () => {
+    Alert.alert(
+      'Déconnexion',
+      'Voulez-vous vraiment vous déconnecter ?',
+      [
+        {
+          text: 'Annuler',
+          style: 'cancel',
+        },
+        {
+          text: 'Oui, déconnecter',
+          style: 'destructive',
+          onPress: async () => {
+            setLoading(true);
+            try {
+              dispatch(logout());
+              await AsyncStorage.multiRemove(['token', 'user']);
+              router.replace('/login');
+            } catch (error) {
+              console.error('Erreur lors de la déconnexion :', error);
+            } finally {
+              setLoading(false);
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  }
+
 
 
   const openModal = (type: string) => {

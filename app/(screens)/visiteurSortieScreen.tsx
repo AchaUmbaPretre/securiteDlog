@@ -91,13 +91,23 @@ const VisiteurSortieScreen: React.FC = () => {
               <Card.Actions>
                 <Button
                   mode="contained"
-                  onPress={() => handleSortie(item.id_registre_visiteur)}
+                  onPress={() => {
+                    Alert.alert(
+                      "Confirmation de sortie",
+                      `Confirmez-vous la sortie de ${item.nom_chauffeur} (Plaque: ${item.immatriculation}) ?\nHeure d'entrée: ${moment(item.date_entree).format('HH:mm')}`,
+                      [
+                        { text: "Annuler", style: "cancel" },
+                        { text: "Confirmer", onPress: () => handleSortie(item.id_registre_visiteur) }
+                      ]
+                    );
+                  }}
                   loading={isSubmitting}
                   disabled={isSubmitting}
                 >
                   Valider le retour
                 </Button>
               </Card.Actions>
+
             </Card>
           )}
         />

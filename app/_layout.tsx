@@ -5,6 +5,9 @@ import { ActivityIndicator, View } from 'react-native';
 import { Provider, useDispatch } from 'react-redux';
 import { setToken, setUser } from '../redux/authSlice';
 import { store } from '../redux/store';
+import { StatusBar } from 'expo-status-bar';
+
+
 
 function AuthInitializer({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch();
@@ -43,6 +46,7 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <AuthInitializer>
+        <StatusBar hidden />
         <Slot />
       </AuthInitializer>
     </Provider>
