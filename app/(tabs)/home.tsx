@@ -20,6 +20,8 @@ import {
   View
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import AgentRetourScreen from '../(screens)/agentRetourScreen';
+import AgentSortieScreen from '../(screens)/agentSortieScreen';
 import VisiteurEntreeScreen from '../(screens)/visiteurEntreeScreen';
 import VisiteurPietonEntree from '../(screens)/visiteurPietonEntree';
 import VisiteurPietonSortie from '../(screens)/visiteurPietonSortie';
@@ -66,6 +68,10 @@ const Home = () => {
         return <VisiteurPietonEntree />;
       case 'visiteurPietonSortie':
         return <VisiteurPietonSortie />;
+      case 'agentSortie':
+        return <AgentSortieScreen />;
+      case 'agentRetour':
+        return <AgentRetourScreen />;
       default:
         return null;
     }
@@ -106,12 +112,12 @@ const Home = () => {
         <View style={styles.itemsContainer}>
           <Item icon={Images.sortieIcon} label="Sortie" onPress={() => openModal('sortie')}/>
           <Item icon={Images.retourIcon} label="Retour" onPress={() => openModal('retour')}/>
-          <Item icon={Images.retourVisiteurIcon} label="Visiteur" />
-          <Item icon={Images.sortieVisiteurIcon} label="Sortie Visiteur" />
-          <Item icon={Images.retourVisiteurPietonIcon} label="Visiteur Piéton" />
-          <Item icon={Images.sortieVisiteurPietonIcon} label="Sortie Visiteur Piéton" />
-          <Item icon={Images.sortieAgent} label="Sortie agent" />
-          <Item icon={Images.retourAgent} label="Retour agent" />
+          <Item icon={Images.retourVisiteurIcon} label="Visiteur" onPress={() => openModal('visiteurEntree')}/>
+          <Item icon={Images.sortieVisiteurIcon} label="Sortie Visiteur" onPress={() => openModal('visiteurSortie')}/>
+          <Item icon={Images.retourVisiteurPietonIcon} label="Visiteur Piéton" onPress={() => openModal('visiteurPietonEntree')}/>
+          <Item icon={Images.sortieVisiteurPietonIcon} label="Sortie Visiteur Piéton" onPress={() => openModal('visiteurPietonSortie')}/>
+          <Item icon={Images.sortieAgent} label="Sortie agent" onPress={() => openModal('agentSortie')}/>
+          <Item icon={Images.retourAgent} label="Retour agent" onPress={() => openModal('agentRetour')}/>
         </View>
       </ScrollView>
 
