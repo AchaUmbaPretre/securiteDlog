@@ -7,7 +7,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { useDispatch } from 'react-redux';
 
 interface User {
-  name: string;
+  nom: string;
   email: string;
 }
 
@@ -28,7 +28,6 @@ const Profil = () => {
   }, []);
 
   const handleLogout = () => {
-    // Confirmation visuelle
     setLoading(true);
     setTimeout(async () => {
       dispatch(logout());

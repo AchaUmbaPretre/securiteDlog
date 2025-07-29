@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "GTM Sécurité",
-    "slug": "gtm-securite",
+    "slug": "GTM",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/gtm.png",
@@ -44,6 +44,7 @@
       "eas": {
         "projectId": "bf860ecc-74f9-4434-934d-7911cdeb08ff"
       }
-    }
+    },
+    "owner": "acha-umba"
   }
 }
