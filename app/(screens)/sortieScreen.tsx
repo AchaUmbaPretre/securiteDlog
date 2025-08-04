@@ -48,7 +48,6 @@ const SortieScreen = () => {
   const [data, setData] = useState<SortieData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
   const userId = useSelector((state: RootState) => state.auth?.currentUser?.id_utilisateur);
 
   const fetchData = async (): Promise<void> => {
@@ -117,72 +116,105 @@ const SortieScreen = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const groupedData = groupByBandeSortie(data);
+const groupedData = groupByBandeSortie(data);
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-        <View style={styles.header}>
+// Séparer les données par date
+const today = moment().startOf('day');
+const enRetard = groupedData.filter(d => moment(d.date_prevue).isBefore(today, 'day'));
+const aujourdhui = groupedData.filter(d => moment(d.date_prevue).isSame(today, 'day'));
+const avenir = groupedData.filter(d => moment(d.date_prevue).isAfter(today, 'day'));
+
+// Composant pour une section de cartes
+const Section = ({ title, sorties }: { title: string, sorties: GroupedSortieData[] }) => (
+  sorties.length > 0 && (
+    <>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      {sorties.map((d) => (
+        <View key={d.id_bande_sortie} style={styles.card}>
+          <View style={styles.row}><Text style={styles.textTitle}>Marque:</Text><Text style={styles.desc}>{d.nom_marque}</Text></View>
+          <View style={styles.row}><Text style={styles.textTitle}>Plaque:</Text><Text style={styles.desc}>{d.immatriculation}</Text></View>
+          <View style={styles.row}><Text style={styles.textTitle}>Chauffeur:</Text><Text style={styles.desc}>{d.nom}</Text></View>
+          <View style={styles.row}><Text style={styles.textTitle}>Date et heure prévue:</Text><Text style={styles.desc}>{moment(d.date_prevue).format('DD-MM-YYYY HH:mm')}</Text></View>
+          <View style={styles.row}>
+            <Text style={styles.textTitle}>Signataires:</Text>
+            <View style={{ flex: 1 }}>
+              {d.signataires.map((s, i) => (
+                <Text key={i} style={styles.desc}>{s.nom} ({s.role})</Text>
+              ))}
+            </View>
+          </View>
+
           <Pressable
-            android_ripple={{ color: '#a3cfff' }}
-            style={styles.rowBtn}
-            onPress={() => router.push('/(screens)/sortieSansBsScreen')}
+            onPress={() =>
+              Alert.alert(
+                'Confirmation',
+                `Valider la sortie du véhicule maintenant ?`,
+                [
+                  { text: 'Annuler', style: 'cancel' },
+                  { text: 'Valider', onPress: () => onFinish(d) },
+                ]
+              )
+            }
+            style={({ pressed }) => [styles.btn, pressed && styles.btnPressed]}
+            disabled={isSubmitting}
           >
-            <AntDesign name="pluscircle" size={32} color="#2978f0" />
+            <AntDesign name="checkcircleo" size={20} color="#fff" style={styles.icon} />
+            <Text style={styles.btnText}>Valider la sortie</Text>
           </Pressable>
         </View>
+      ))}
+    </>
+  )
+);
 
-        <Text style={styles.title}>SORTIE DU VEHICULE</Text>
+return (
+  <SafeAreaView style={styles.container}>
+    <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+      <View style={styles.header}>
+        <Pressable
+          android_ripple={{ color: '#a3cfff' }}
+          style={styles.rowBtn}
+          onPress={() => router.push('/(screens)/sortieSansBsScreen')}
+        >
+          <AntDesign name="pluscircle" size={32} color="#2978f0" />
+        </Pressable>
+      </View>
 
-        {loading ? (
-          <ActivityIndicator size="large" color="#2978f0" />
-        ) : groupedData.length === 0 ? (
-          <Text style={{ color: '#888', marginTop: 20 }}>Aucune demande de sortie disponible.</Text>
-        ) : (
-          groupedData.map((d) => (
-            <View key={d.id_bande_sortie} style={styles.card}>
-              <View style={styles.row}><Text style={styles.textTitle}>Marque:</Text><Text style={styles.desc}>{d.nom_marque}</Text></View>
-              <View style={styles.row}><Text style={styles.textTitle}>Plaque:</Text><Text style={styles.desc}>{d.immatriculation}</Text></View>
-              <View style={styles.row}><Text style={styles.textTitle}>Chauffeur:</Text><Text style={styles.desc}>{d.nom}</Text></View>
-              <View style={styles.row}><Text style={styles.textTitle}>Heure prévue:</Text><Text style={styles.desc}>{moment(d.date_prevue).format('HH:mm')}</Text></View>
-              <View style={styles.row}>
-                <Text style={styles.textTitle}>Signataires:</Text>
-                <View style={{ flex: 1 }}>
-                  {d.signataires.map((s, i) => (
-                    <Text key={i} style={styles.desc}>{s.nom} ({s.role})</Text>
-                  ))}
-                </View>
-              </View>
+      <Text style={styles.title}>SORTIE DES VÉHICULES</Text>
 
-              <Pressable
-                onPress={() =>
-                  Alert.alert(
-                    'Confirmation',
-                    `Valider la sortie du véhicule maintenant ?`,
-                    [
-                      { text: 'Annuler', style: 'cancel' },
-                      { text: 'Valider', onPress: () => onFinish(d) },
-                    ]
-                  )
-                }
-                style={({ pressed }) => [styles.btn, pressed && styles.btnPressed]}
-                disabled={isSubmitting}
-              >
-                <AntDesign name="checkcircleo" size={20} color="#fff" style={styles.icon} />
-                <Text style={styles.btnText}>Valider la sortie</Text>
-              </Pressable>
-            </View>
-          ))
-        )}
-      </ScrollView>
-    </SafeAreaView>
-  );
+      {loading ? (
+        <ActivityIndicator size="large" color="#2978f0" />
+      ) : groupedData.length === 0 ? (
+        <Text style={{ color: '#888', marginTop: 20 }}>Aucune demande de sortie disponible.</Text>
+      ) : (
+        <>
+          <Section title="🔴 En retard" sorties={enRetard} />
+          <Section title="🟢 Aujourd'hui" sorties={aujourdhui} />
+          <Section title="🟡 À venir" sorties={avenir} />
+        </>
+      )}
+    </ScrollView>
+  </SafeAreaView>
+);
+
 };
 
 export default SortieScreen;
 
 // Styles
 const styles = StyleSheet.create({
+    sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#003366',
+    marginBottom: 12,
+    marginTop: 25,
+    width: '90%',
+    alignSelf: 'center',
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    paddingBottom: 6,
+  },
   container: {
     flex: 1,
     backgroundColor: '#f9fbff',
@@ -229,14 +261,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   textTitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#555',
     fontWeight: '500',
     width: '40%',
   },
   desc: {
     fontWeight: '700',
-    fontSize: 16,
+    fontSize: 14,
     color: '#222',
     width: '60%',
   },
@@ -256,7 +288,7 @@ const styles = StyleSheet.create({
   },
   btnText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
   },
   icon: {
