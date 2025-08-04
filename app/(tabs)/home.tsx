@@ -11,10 +11,8 @@ import {
   Alert,
   Image,
   Modal,
-  Platform,
   SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -104,7 +102,7 @@ const Home = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <ScrollView style={styles.container}>
         {/* Header utilisateur */}
         <View style={styles.wrapper}>
@@ -168,7 +166,7 @@ const Home = () => {
       </SafeAreaView>
     </Modal>
 
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -178,11 +176,11 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#f2f2f2',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   container: {
     flex: 1,
     paddingHorizontal: 20,
+    paddingVertical: 10
   },
   wrapper: {
     flexDirection: 'row',

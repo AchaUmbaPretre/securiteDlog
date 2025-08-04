@@ -14,14 +14,11 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Platform,
   Pressable,
-  SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  View,
+  View
 } from "react-native";
 import { Button, Card, TextInput, Title } from "react-native-paper";
 import { useSelector } from "react-redux";
@@ -180,7 +177,7 @@ const Plus: React.FC = () => {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={styles.scroll}
@@ -237,7 +234,7 @@ const Plus: React.FC = () => {
           )}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -253,7 +250,8 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: "#f7f9fc",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    marginBottom: 25,
+
   },
   scrollContainer: {
     flex: 1,

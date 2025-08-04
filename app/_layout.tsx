@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Provider, useDispatch } from 'react-redux';
 import { setToken, setUser } from '../redux/authSlice';
 import { store } from '../redux/store';
+import { useColorScheme } from 'react-native';
 
 const { height } = Dimensions.get('window');
 
@@ -44,6 +45,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 }
 
 export default function RootLayout() {
+  const colorScheme = useColorScheme();
   return (
     <Provider store={store}>
       <SafeAreaView style={styles.safeArea}>
