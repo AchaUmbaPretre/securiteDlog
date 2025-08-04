@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 
 import { RootState } from '@/redux/store';
 import { getRetourVehicule, postRetourVehicule } from '@/services/charroiService';
+import { Picker } from '@react-native-picker/picker';
 
 type RetourData = {
   id_bande_sortie: number;
@@ -32,16 +33,20 @@ type RetourData = {
   autorise_par: string;
   nom_marque: string;
   immatriculation: string;
+  sortie_time: string;
   nom: string;
   nom_type_vehicule: string;
+  nom_destination: string;
 };
+
+// ... imports inchangés
 
 const RetourScreen: React.FC = () => {
   const router = useRouter();
   const [data, setData] = useState<RetourData[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [chauffeurFiltre, setChauffeurFiltre] = useState("");
   const userId = useSelector((state: RootState) => state.auth?.currentUser?.id_utilisateur);
 
   const fetchData = async () => {
@@ -60,6 +65,29 @@ const RetourScreen: React.FC = () => {
     const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  const aujourdHui = moment().startOf('day');
+
+  const filteredData = data.filter(d =>
+    !chauffeurFiltre || d.nom.toLowerCase() === chauffeurFiltre.toLowerCase()
+  );
+
+  const sortByChauffeurAndMatricule = (a: RetourData, b: RetourData) =>
+    a.nom.localeCompare(b.nom) || a.immatriculation.localeCompare(b.immatriculation);
+
+  const retards = filteredData
+    .filter(d => moment(d.sortie_time).isBefore(aujourdHui, 'day'))
+    .sort(sortByChauffeurAndMatricule);
+
+  const aujourdhui = filteredData
+    .filter(d => moment(d.sortie_time).isSame(aujourdHui, 'day'))
+    .sort(sortByChauffeurAndMatricule);
+
+  const avenirs = filteredData
+    .filter(d => moment(d.sortie_time).isAfter(aujourdHui, 'day'))
+    .sort(sortByChauffeurAndMatricule);
+
+  const chauffeursUniques = Array.from(new Set(data.map(item => item.nom))).filter(Boolean);
 
   const handleValidate = async (d: RetourData) => {
     const payload = {
@@ -91,6 +119,49 @@ const RetourScreen: React.FC = () => {
     }
   };
 
+  const renderCard = (d: RetourData) => (
+    <View key={d.id_bande_sortie} style={styles.card}>
+      <View style={styles.row}>
+        <Text style={styles.textTitle}>Marque:</Text>
+        <Text style={styles.desc}>{d.nom_marque}</Text>
+      </View>
+      <View style={styles.row}>
+        <Text style={styles.textTitle}>Plaque:</Text>
+        <Text style={styles.desc}>{d.immatriculation}</Text>
+      </View>
+      <View style={styles.row}>
+        <Text style={styles.textTitle}>Chauffeur:</Text>
+        <Text style={styles.desc}>{d.nom}</Text>
+      </View>
+      <View style={styles.row}>
+        <Text style={styles.textTitle}>Provenance:</Text>
+        <Text style={styles.desc}>{d.nom_destination}</Text>
+      </View>
+      <View style={styles.row}>
+        <Text style={styles.textTitle}>Date sortie :</Text>
+        <Text style={styles.desc}>{moment(d.sortie_time).format('DD-MM-YYYY HH:mm')}</Text>
+      </View>
+
+      <Pressable
+        onPress={() =>
+          Alert.alert(
+            'Confirmation',
+            `Valider le retour du véhicule ${d.immatriculation} maintenant ?`,
+            [
+              { text: 'Annuler', style: 'cancel' },
+              { text: 'Valider', onPress: () => handleValidate(d) },
+            ]
+          )
+        }
+        style={({ pressed }) => [styles.btn, pressed && styles.btnPressed]}
+        disabled={isSubmitting}
+      >
+        <AntDesign name="checkcircleo" size={20} color="#fff" style={styles.icon} />
+        <Text style={styles.btnText}>Valider le retour</Text>
+      </Pressable>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
@@ -111,44 +182,39 @@ const RetourScreen: React.FC = () => {
         ) : data.length === 0 ? (
           <Text style={{ color: '#888', marginTop: 20 }}>Aucun retour à valider.</Text>
         ) : (
-          data.map((d) => (
-            <View key={d.id_bande_sortie} style={styles.card}>
-              <View style={styles.row}>
-                <Text style={styles.textTitle}>Marque:</Text>
-                <Text style={styles.desc}>{d.nom_marque}</Text>
-              </View>
-              <View style={styles.row}>
-                <Text style={styles.textTitle}>Plaque:</Text>
-                <Text style={styles.desc}>{d.immatriculation}</Text>
-              </View>
-              <View style={styles.row}>
-                <Text style={styles.textTitle}>Chauffeur:</Text>
-                <Text style={styles.desc}>{d.nom}</Text>
-              </View>
-              <View style={styles.row}>
-                <Text style={styles.textTitle}>Heure actuelle:</Text>
-                <Text style={styles.desc}>{moment().format('HH:mm')}</Text>
-              </View>
+          <>
+            <Picker
+              selectedValue={chauffeurFiltre}
+              onValueChange={setChauffeurFiltre}
+              style={{ height: 50, width: "90%", marginBottom: 10 }}
+            >
+              <Picker.Item label="Tous les chauffeurs" value="" />
+              {chauffeursUniques.map((chauffeur, index) => (
+                <Picker.Item key={index} label={chauffeur} value={chauffeur} />
+              ))}
+            </Picker>
 
-              <Pressable
-                onPress={() =>
-                  Alert.alert(
-                    'Confirmation',
-                    `Valider le retour du véhicule ${d.immatriculation} maintenant ?`,
-                    [
-                      { text: 'Annuler', style: 'cancel' },
-                      { text: 'Valider', onPress: () => handleValidate(d) },
-                    ]
-                  )
-                }
-                style={({ pressed }) => [styles.btn, pressed && styles.btnPressed]}
-                disabled={isSubmitting}
-              >
-                <AntDesign name="checkcircleo" size={20} color="#fff" style={styles.icon} />
-                <Text style={styles.btnText}>Valider le retour</Text>
-              </Pressable>
-            </View>
-          ))
+            {aujourdhui.length > 0 && (
+              <>
+                <Text style={styles.sectionTitle}>📅 Aujourd’hui</Text>
+                {aujourdhui.map(renderCard)}
+              </>
+            )}
+
+            {retards.length > 0 && (
+              <>
+                <Text style={styles.sectionTitle}>🚨 Retards</Text>
+                {retards.map(renderCard)}
+              </>
+            )}
+
+            {avenirs.length > 0 && (
+              <>
+                <Text style={styles.sectionTitle}>⏳ À venir</Text>
+                {avenirs.map(renderCard)}
+              </>
+            )}
+          </>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -157,8 +223,18 @@ const RetourScreen: React.FC = () => {
 
 export default RetourScreen;
 
+
 // Styles
 const styles = StyleSheet.create({
+    sectionTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#003366',
+    marginBottom: 10,
+    marginTop: 20,
+    alignSelf: 'flex-start',
+    marginLeft: '5%',
+  },
   container: {
     flex: 1,
     backgroundColor: '#f9fbff',
@@ -220,7 +296,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#007BFF',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,

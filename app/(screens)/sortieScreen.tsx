@@ -33,6 +33,7 @@ interface SortieData {
   date_prevue: string;
   personne_signe: string;
   role: string;
+  nom_destination: string;
 }
 
 // Typage après regroupement
@@ -135,6 +136,7 @@ const Section = ({ title, sorties }: { title: string, sorties: GroupedSortieData
           <View style={styles.row}><Text style={styles.textTitle}>Plaque:</Text><Text style={styles.desc}>{d.immatriculation}</Text></View>
           <View style={styles.row}><Text style={styles.textTitle}>Chauffeur:</Text><Text style={styles.desc}>{d.nom}</Text></View>
           <View style={styles.row}><Text style={styles.textTitle}>Date et heure prévue:</Text><Text style={styles.desc}>{moment(d.date_prevue).format('DD-MM-YYYY HH:mm')}</Text></View>
+          <View style={styles.row}><Text style={styles.textTitle}>Destination:</Text><Text style={styles.desc}>{d.nom_destination}</Text></View>
           <View style={styles.row}>
             <Text style={styles.textTitle}>Signataires:</Text>
             <View style={{ flex: 1 }}>
@@ -276,7 +278,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#007BFF',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
