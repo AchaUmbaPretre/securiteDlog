@@ -281,14 +281,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   textTitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#555',
     fontWeight: '500',
     width: '40%',
   },
   desc: {
     fontWeight: '700',
-    fontSize: 16,
+    fontSize: 14,
     color: '#222',
     width: '60%',
   },
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
   },
   btnText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
   },
   icon: {

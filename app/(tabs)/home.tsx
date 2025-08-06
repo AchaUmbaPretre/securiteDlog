@@ -35,7 +35,6 @@ const Home = () => {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
-
     const handleLogout = () => {
     Alert.alert(
       'Déconnexion',
@@ -65,8 +64,6 @@ const Home = () => {
       { cancelable: true }
     );
   }
-
-
 
   const openModal = (type: string) => {
     setModalType(type);
@@ -145,26 +142,26 @@ const Home = () => {
         </View>
       </ScrollView>
 
-    <Modal
-      animationType="slide"
-      transparent={false}
-      visible={showModal}
-      onRequestClose={closeModal}
-    >
-      <SafeAreaView style={{ flex: 1 }}>
-        {/* Bouton de fermeture */}
-        <View style={{ alignItems: 'flex-end', padding: 15 }}>
-          <TouchableOpacity onPress={closeModal}>
-            <Feather name="x" size={28} color="#000" />
-          </TouchableOpacity>
-        </View>
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={showModal}
+        onRequestClose={closeModal}
+      >
+        <SafeAreaView style={{ flex: 1 }}>
+          {/* Bouton de fermeture */}
+          <View style={{ alignItems: 'flex-end', padding: 15 }}>
+            <TouchableOpacity onPress={closeModal}>
+              <Feather name="x" size={28} color="#000" />
+            </TouchableOpacity>
+          </View>
 
-        {/* Contenu du modal */}
-        <View style={{ flex: 1 }}>
-          {renderModalContent()}
-        </View>
-      </SafeAreaView>
-    </Modal>
+          {/* Contenu du modal */}
+          <View style={{ flex: 1 }}>
+            {renderModalContent()}
+          </View>
+        </SafeAreaView>
+      </Modal>
 
     </View>
   );

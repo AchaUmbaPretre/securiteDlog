@@ -1,6 +1,8 @@
 import { RootState } from '@/redux/store'; // Adapte ce chemin si nécessaire
 import { getSortieVehicule, postSortieVehicule } from '@/services/charroiService';
 import { AntDesign } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
 import { useRouter } from 'expo-router';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -15,6 +17,7 @@ import {
   View
 } from 'react-native';
 import { useSelector } from 'react-redux';
+
 
 // Typage des données brutes
 interface SortieData {
@@ -55,8 +58,14 @@ const SortieScreen = () => {
     try {
       const [sortieData] = await Promise.all([getSortieVehicule()]);
       setData(sortieData.data);
+      await AsyncStorage.setItem('sortie_data', JSON.stringify(sortieData.data));
+
     } catch (error) {
       console.log('Erreur fetch:', error);
+      const localData = await AsyncStorage.getItem('sortie_data');
+      if (localData) {
+        setData(JSON.parse(localData));
+      }
     } finally {
       setLoading(false);
     }
@@ -84,38 +93,66 @@ const SortieScreen = () => {
     return Object.values(grouped);
   };
 
-  const onFinish = async (d: GroupedSortieData): Promise<void> => {
-    const value = {
-      id_bande_sortie: d.id_bande_sortie,
-      id_vehicule: d.id_vehicule,
-      id_chauffeur: d.id_chauffeur,
-      id_destination: d.id_destination,
-      id_motif: d.id_motif_demande,
-      id_demandeur: d.id_demandeur,
-      id_client: d.id_client,
-      personne_bord: d.personne_bord,
-      id_societe: d.id_societe,
-      id_agent: userId,
-    };
-
-    setIsSubmitting(true);
-
-    try {
-      await postSortieVehicule(value);
-      Alert.alert("Succès", `Le véhicule N°${d.immatriculation} a été validé.`);
-      fetchData();
-    } catch (error) {
-      Alert.alert("Erreur", "Impossible de valider la sortie.");
-    } finally {
-      setIsSubmitting(false);
-    }
+  const onFinish = async (d: GroupedSortieData) => {
+  const value = {
+    id_bande_sortie: d.id_bande_sortie,
+    id_vehicule: d.id_vehicule,
+    id_chauffeur: d.id_chauffeur,
+    id_destination: d.id_destination,
+    id_motif: d.id_motif_demande,
+    id_demandeur: d.id_demandeur,
+    id_client: d.id_client,
+    personne_bord: d.personne_bord,
+    id_societe: d.id_societe,
+    id_agent: userId,
   };
 
-  useEffect(() => {
+  setIsSubmitting(true);
+
+  try {
+    await postSortieVehicule(value);
+    Alert.alert("Succès", `Le véhicule N°${d.immatriculation} a été validé.`);
     fetchData();
-    const interval = setInterval(fetchData, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  } catch (error) {
+    Alert.alert("Mode hors-ligne", "Validation enregistrée localement. Elle sera envoyée dès que la connexion revient.");
+
+    const pending = await AsyncStorage.getItem('pending_validations');
+    const updated = pending ? JSON.parse(pending) : [];
+    updated.push(value);
+    await AsyncStorage.setItem('pending_validations', JSON.stringify(updated));
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+useEffect(() => {
+  fetchData();
+  const interval = setInterval(fetchData, 5000);
+
+  const unsubscribe = NetInfo.addEventListener(async state => {
+    if (state.isConnected) {
+      const pending = await AsyncStorage.getItem('pending_validations');
+      if (pending) {
+        const toSend = JSON.parse(pending);
+        for (const item of toSend) {
+          try {
+            await postSortieVehicule(item);
+          } catch (err) {
+            console.error("Échec d'envoi d'une validation en attente");
+          }
+        }
+        await AsyncStorage.removeItem('pending_validations');
+        fetchData();
+      }
+    }
+  });
+
+  return () => {
+    clearInterval(interval);
+    unsubscribe();
+  };
+}, []);
+
 
 const groupedData = groupByBandeSortie(data);
 
@@ -190,8 +227,8 @@ return (
         <Text style={{ color: '#888', marginTop: 20 }}>Aucune demande de sortie disponible.</Text>
       ) : (
         <>
-          <Section title="🔴 En retard" sorties={enRetard} />
           <Section title="🟢 Aujourd'hui" sorties={aujourdhui} />
+          <Section title="🔴 En retard" sorties={enRetard} />
           <Section title="🟡 À venir" sorties={avenir} />
         </>
       )}
