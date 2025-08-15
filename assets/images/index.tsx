@@ -8,6 +8,6 @@ export const Images = {
  sortieVisiteurPietonIcon : require('./sortie_pieton.png'),
  retourVisiteurPietonIcon : require('./visiteur_pieton.png'),
  sortieAgent : require('./agent.png'),
- retourAgent : require('./agent_retour.png')
-
+ retourAgent : require('./agent_retour.png'),
+ logoIcon : require('./gtm.png')
 }

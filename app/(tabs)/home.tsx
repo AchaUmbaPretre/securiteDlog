@@ -3,7 +3,7 @@ import SortieScreen from '@/app/(screens)/sortieScreen';
 import { Images } from '@/assets/images';
 import { Item } from '@/components/Item';
 import { logout } from '@/redux/authSlice';
-import { Feather } from '@expo/vector-icons';
+import { AntDesign, Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -18,6 +18,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import AgentRetourScreen from '../(screens)/agentRetourScreen';
 import AgentSortieScreen from '../(screens)/agentSortieScreen';
@@ -25,7 +26,6 @@ import VisiteurEntreeScreen from '../(screens)/visiteurEntreeScreen';
 import VisiteurPietonEntree from '../(screens)/visiteurPietonEntree';
 import VisiteurPietonSortie from '../(screens)/visiteurPietonSortie';
 import VisiteurSortieScreen from '../(screens)/visiteurSortieScreen';
-
 
 const Home = () => {
   const user = useSelector((state: any) => state.auth?.currentUser);
@@ -102,22 +102,27 @@ const Home = () => {
     <View style={styles.safeArea}>
       <ScrollView style={styles.container}>
         {/* Header utilisateur */}
-        <View style={styles.wrapper}>
+        <View style={styles.header}>
           <View style={styles.profileContainer}>
-            <Image source={Images.userIcon} style={styles.image} />
-            <View style={styles.textContainer}>
-              <Text style={styles.name}>{user?.nom}</Text>
-              <Text style={styles.role}>{user?.role}</Text>
+            <View style={styles.avatarCircle}>
+              <Image source={Images.logoIcon} style={styles.logoIcon} />
             </View>
           </View>
 
-          <TouchableOpacity style={styles.logoutIcon} onPress={handleLogout}>
-            <Feather name="log-out" size={25} color="#d9534f" />
+          <View>
+            <Text style={styles.titleApp}>DLOG</Text>
+          </View>
+
+          <TouchableOpacity onPress={handleLogout}>
+            {loading ? (
+              <ActivityIndicator animating size={24} />
+            ) : (
+              <AntDesign name="ellipsis1" size={24} color="#011481"/>
+            )}
           </TouchableOpacity>
         </View>
 
-        {/* Titre */}
-        <Text style={styles.titleFirst}>👋 Bienvenue sur DLOG</Text>
+        <Text style={styles.title}>Salut {user?.nom} 👋</Text>
 
         {/* Image plein écran */}
         <View style={{
@@ -172,12 +177,52 @@ export default Home;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#F9FAFB',
   },
   container: {
     flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 10
+  },
+    header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  profileContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  avatarCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#E8EDF7',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },
+  logoIcon: {
+    width: '90%',
+    height: '90%',
+    resizeMode: 'contain',
+  },
+  titleApp: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#011481',
+    fontFamily: 'Inter-Bold',
+  },
+    title: {
+    marginVertical: 15,
+    fontWeight: '700',
+    fontSize: 20,
+    fontFamily: 'Inter-Bold',
+    color: '#1F2937',
   },
   wrapper: {
     flexDirection: 'row',
@@ -217,10 +262,8 @@ const styles = StyleSheet.create({
   },
   backImage: {
     width: '100%',
-    height: 200,
+    height: 180,
     resizeMode: 'cover',
-    marginBottom: 20,
-    borderRadius: 8,
   },
   itemsContainer: {
     flexDirection: 'row',
