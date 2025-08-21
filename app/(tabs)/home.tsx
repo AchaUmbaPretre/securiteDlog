@@ -122,13 +122,12 @@ const Home = () => {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.title}>Salut {user?.nom} 👋</Text>
-
         {/* Image plein écran */}
         <View style={{
           backgroundColor:'#fff',
           borderRadius: 10,
           marginBottom: 15,
+          marginTop: 10,
         }}>
           <Image source={Images.backIcon} style={styles.backImage} />
         </View>
@@ -262,8 +261,9 @@ const styles = StyleSheet.create({
   },
   backImage: {
     width: '100%',
-    height: 180,
+    height: 250,
     resizeMode: 'cover',
+    borderRadius: 12
   },
   itemsContainer: {
     flexDirection: 'row',

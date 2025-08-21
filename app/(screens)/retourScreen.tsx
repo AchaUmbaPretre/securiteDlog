@@ -1,4 +1,7 @@
+import { RootState } from '@/redux/store';
+import { getRetourVehicule, postRetourVehicule } from '@/services/charroiService';
 import { AntDesign } from '@expo/vector-icons';
+import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -13,10 +16,6 @@ import {
   View
 } from 'react-native';
 import { useSelector } from 'react-redux';
-
-import { RootState } from '@/redux/store';
-import { getRetourVehicule, postRetourVehicule } from '@/services/charroiService';
-import { Picker } from '@react-native-picker/picker';
 
 type RetourData = {
   id_bande_sortie: number;
@@ -38,8 +37,6 @@ type RetourData = {
   nom_type_vehicule: string;
   nom_destination: string;
 };
-
-// ... imports inchangés
 
 const RetourScreen: React.FC = () => {
   const router = useRouter();
@@ -177,6 +174,13 @@ const RetourScreen: React.FC = () => {
 
         <Text style={styles.title}>RETOUR DU VÉHICULE</Text>
 
+        {/* compteur global */}
+        <View style={styles.counterBox}>
+          <Text style={styles.counterText}>
+            Nombre total de véhicules : <Text style={styles.counterStrong}>{filteredData.length}</Text>
+          </Text>
+        </View>
+
         {isLoading ? (
           <ActivityIndicator size="large" color="#2978f0" />
         ) : data.length === 0 ? (
@@ -196,21 +200,27 @@ const RetourScreen: React.FC = () => {
 
             {aujourdhui.length > 0 && (
               <>
-                <Text style={styles.sectionTitle}>📅 Aujourd’hui</Text>
+                <Text style={styles.sectionTitle}>
+                  📅 Aujourd’hui <Text style={styles.badge}>{aujourdhui.length}</Text>
+                </Text>
                 {aujourdhui.map(renderCard)}
               </>
             )}
 
             {retards.length > 0 && (
               <>
-                <Text style={styles.sectionTitle}>🚨 Retards</Text>
+                <Text style={styles.sectionTitle}>
+                  🚨 Retards <Text style={styles.badge}>{retards.length}</Text>
+                </Text>
                 {retards.map(renderCard)}
               </>
             )}
 
             {avenirs.length > 0 && (
               <>
-                <Text style={styles.sectionTitle}>⏳ À venir</Text>
+                <Text style={styles.sectionTitle}>
+                  ⏳ À venir <Text style={styles.badge}>{avenirs.length}</Text>
+                </Text>
                 {avenirs.map(renderCard)}
               </>
             )}
@@ -226,7 +236,7 @@ export default RetourScreen;
 
 // Styles
 const styles = StyleSheet.create({
-    sectionTitle: {
+  sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
     color: '#003366',
@@ -234,6 +244,34 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignSelf: 'flex-start',
     marginLeft: '5%',
+  },
+  badge: {
+    fontSize: 12,
+    fontWeight: '700',
+    height: 40,
+    backgroundColor: '#2978f0',
+    color: '#fff',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    borderRadius: 12,
+    marginLeft: 8,
+  },
+  counterBox: {
+    backgroundColor: '#eaf2ff',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 15,
+    width: '90%',
+    alignSelf: 'center',
+  },
+  counterText: {
+    fontSize: 16,
+    color: '#003366',
+  },
+  counterStrong: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#2978f0',
   },
   container: {
     flex: 1,
@@ -260,7 +298,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#003366',
     fontSize: 22,
-    marginBottom: 30,
+    marginBottom: 20,
   },
   card: {
     width: '90%',

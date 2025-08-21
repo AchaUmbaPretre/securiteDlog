@@ -53,7 +53,7 @@ export default function RootLayout() {
           <AuthInitializer>
             <Slot />
           </AuthInitializer>
-      </SafeAreaView>
+      </SafeAreaView>     
     </Provider>
   );
 }
