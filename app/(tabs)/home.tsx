@@ -21,7 +21,7 @@ import {
 } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import Swiper from 'react-native-swiper';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import AgentRetourScreen from '../(screens)/agentRetourScreen';
 import AgentSortieScreen from '../(screens)/agentSortieScreen';
 import VisiteurEntreeScreen from '../(screens)/visiteurEntreeScreen';
@@ -30,8 +30,8 @@ import VisiteurPietonSortie from '../(screens)/visiteurPietonSortie';
 import VisiteurSortieScreen from '../(screens)/visiteurSortieScreen';
 
 const Home = () => {
-  const user = useSelector((state: any) => state.auth?.currentUser);
-  const [showModal, setShowModal] = useState(false);
+/*   const user = useSelector((state: any) => state.auth?.currentUser);
+ */  const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -344,8 +344,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   logoIcon: {
-    width: '65%',
-    height: '65%',
+    width: '95%',
+    height: '95%',
     resizeMode: 'contain',
     tintColor: '#FFFFFF',
   },
