@@ -13,12 +13,14 @@ import {
   Modal,
   SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   View
 } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
+import Swiper from 'react-native-swiper';
 import { useDispatch, useSelector } from 'react-redux';
 import AgentRetourScreen from '../(screens)/agentRetourScreen';
 import AgentSortieScreen from '../(screens)/agentSortieScreen';
@@ -35,7 +37,7 @@ const Home = () => {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
-    const handleLogout = () => {
+  const handleLogout = () => {
     Alert.alert(
       'Déconnexion',
       'Voulez-vous vraiment vous déconnecter ?',
@@ -100,73 +102,196 @@ const Home = () => {
 
   return (
     <View style={styles.safeArea}>
-      <ScrollView style={styles.container}>
-        {/* Header utilisateur */}
+      <StatusBar barStyle="light-content" backgroundColor="#007AFF" />
+      
+      <ScrollView 
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Header avec gradient iOS moderne */}
         <View style={styles.header}>
           <View style={styles.profileContainer}>
             <View style={styles.avatarCircle}>
               <Image source={Images.logoIcon} style={styles.logoIcon} />
+              {/* Badge online */}
+              <View style={styles.onlineBadge} />
             </View>
           </View>
 
-          <View>
+          <View style={styles.titleContainer}>
             <Text style={styles.titleApp}>DLOG</Text>
+            <Text style={styles.subtitle}>Gestion Logistique</Text>
           </View>
 
-          <TouchableOpacity onPress={handleLogout}>
+          <TouchableOpacity 
+            style={styles.menuButton}
+            onPress={handleLogout}
+            activeOpacity={0.7}
+          >
             {loading ? (
-              <ActivityIndicator animating size={24} />
+              <ActivityIndicator animating size={24} color="#FFFFFF" />
             ) : (
-              <AntDesign name="ellipsis1" size={24} color="#011481"/>
+              <AntDesign name="ellipsis1" size={24} color="#FFFFFF" />
             )}
           </TouchableOpacity>
         </View>
 
-        {/* Image plein écran */}
-        <View style={{
-          backgroundColor:'#fff',
-          borderRadius: 10,
-          marginBottom: 15,
-          marginTop: 10,
-        }}>
-          <Image source={Images.backIcon} style={styles.backImage} />
+        {/* Carousel avec design iOS moderne */}
+        <View style={styles.sliderContainer}>
+          <Swiper
+            autoplay
+            autoplayTimeout={4}
+            showsPagination
+            dotStyle={styles.swiperDot}
+            activeDotStyle={styles.swiperActiveDot}
+            paginationStyle={styles.swiperPagination}
+            containerStyle={styles.swiperContainer}
+          >
+            <View style={styles.slide}>
+              <Image source={Images.slider1} style={styles.backImage} />
+              <View style={styles.slideOverlay}>
+                <Text style={styles.slideTitle}>Suivi en Temps Réel</Text>
+                <Text style={styles.slideSubtitle}>Optimisez vos opérations</Text>
+              </View>
+            </View>
+            <View style={styles.slide}>
+              <Image source={Images.backIcon} style={styles.backImage} />
+              <View style={styles.slideOverlay}>
+                <Text style={styles.slideTitle}>Suivi en Temps Réel</Text>
+                <Text style={styles.slideSubtitle}>Données intelligentes</Text>
+              </View>
+            </View>
+            <View style={styles.slide}>
+              <Image source={Images.slider2} style={styles.backImage} />
+              <View style={styles.slideOverlay}>
+                <Text style={styles.slideTitle}>Suivi en Temps Réel</Text>
+                <Text style={styles.slideSubtitle}>Optimisez vos opérations</Text>
+              </View>
+            </View>
+          </Swiper>
         </View>
-        <Text style={styles.titleFirst}>⚙️ Nos options</Text>
 
-        {/* Items */}
+        {/* Section Options avec design iOS */}
+        <View style={styles.sectionHeader}>
+          <View style={styles.sectionTitleRow}>
+            <View style={styles.iconCircle}>
+              <Text style={styles.iconEmoji}>⚡</Text>
+            </View>
+            <Text style={styles.titleFirst}>Nos options</Text>
+          </View>
+          <Text style={styles.sectionDescription}>
+            Accédez rapidement à toutes les fonctionnalités
+          </Text>
+        </View>
+
+        {/* Grille d'items avec design iOS 2026 */}
         <View style={styles.itemsContainer}>
-          <Item icon={Images.sortieIcon} label="Sortie" onPress={() => openModal('sortie')}/>
-          <Item icon={Images.retourIcon} label="Retour" onPress={() => openModal('retour')}/>
-          <Item icon={Images.retourVisiteurIcon} label="Visiteur" onPress={() => openModal('visiteurEntree')}/>
-          <Item icon={Images.sortieVisiteurIcon} label="Sortie Visiteur" onPress={() => openModal('visiteurSortie')}/>
-          <Item icon={Images.retourVisiteurPietonIcon} label="Visiteur Piéton" onPress={() => openModal('visiteurPietonEntree')}/>
-          <Item icon={Images.sortieVisiteurPietonIcon} label="Sortie Visiteur Piéton" onPress={() => openModal('visiteurPietonSortie')}/>
-          <Item icon={Images.sortieAgent} label="Sortie agent" onPress={() => openModal('agentSortie')}/>
-          <Item icon={Images.retourAgent} label="Retour agent" onPress={() => openModal('agentRetour')}/>
+          <Item 
+            icon={Images.sortieIcon} 
+            label="Sortie" 
+            color="#007AFF"
+            variant="ios"
+            onPress={() => openModal('sortie')}
+          />
+          <Item 
+            icon={Images.retourIcon} 
+            label="Retour" 
+            color="#34C759"
+            variant="ios"
+            onPress={() => openModal('retour')}
+          />
+          <Item 
+            icon={Images.retourVisiteurIcon} 
+            label="Visiteur" 
+            color="#FF9500"
+            variant="ios"
+            onPress={() => openModal('visiteurEntree')}
+          />
+          <Item 
+            icon={Images.sortieVisiteurIcon} 
+            label="Sortie Visiteur" 
+            color="#FF3B30"
+            variant="ios"
+            onPress={() => openModal('visiteurSortie')}
+          />
+          <Item 
+            icon={Images.retourVisiteurPietonIcon} 
+            label="Visiteur Piéton" 
+            color="#AF52DE"
+            variant="ios"
+            onPress={() => openModal('visiteurPietonEntree')}
+          />
+          <Item 
+            icon={Images.sortieVisiteurPietonIcon} 
+            label="Sortie Visiteur Piéton" 
+            color="#FF2D55"
+            variant="ios"
+            onPress={() => openModal('visiteurPietonSortie')}
+          />
+          <Item 
+            icon={Images.sortieAgent} 
+            label="Sortie agent" 
+            color="#5856D6"
+            variant="ios"
+            onPress={() => openModal('agentSortie')}
+          />
+          <Item 
+            icon={Images.retourAgent} 
+            label="Retour agent" 
+            color="#5AC8FA"
+            variant="ios"
+            onPress={() => openModal('agentRetour')}
+          />
+        </View>
+
+        {/* Pied de page iOS style */}
+        <View style={styles.footer}>
+          <View style={styles.footerContent}>
+            <Text style={styles.footerText}>Version 4.2.0</Text>
+            <View style={styles.dotSeparator} />
+            <Text style={styles.footerText}>DLOG Systems</Text>
+            <View style={styles.dotSeparator} />
+            <Text style={styles.footerText}>© 2026</Text>
+          </View>
         </View>
       </ScrollView>
 
+      {/* Modal avec design iOS 2026 */}
       <Modal
         animationType="slide"
         transparent={false}
         visible={showModal}
         onRequestClose={closeModal}
+        statusBarTranslucent={true}
       >
-        <SafeAreaView style={{ flex: 1 }}>
-          {/* Bouton de fermeture */}
-          <View style={{ alignItems: 'flex-end', padding: 15 }}>
-            <TouchableOpacity onPress={closeModal}>
-              <Feather name="x" size={28} color="#000" />
-            </TouchableOpacity>
+        <SafeAreaView style={styles.modalContainer}>
+          {/* Header modal iOS style */}
+          <View style={styles.modalHeader}>
+            <View style={styles.modalHeaderGradient}>
+              <View style={styles.modalHeaderContent}>
+                <View style={styles.modalTitleContainer}>
+                  <Text style={styles.modalTitle}>
+                    {modalType ? modalType.charAt(0).toUpperCase() + modalType.slice(1) : ''}
+                  </Text>
+                </View>
+                <TouchableOpacity 
+                  style={styles.closeButton}
+                  onPress={closeModal}
+                  activeOpacity={0.7}
+                >
+                  <Feather name="x" size={24} color="#FFFFFF" />
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
 
           {/* Contenu du modal */}
-          <View style={{ flex: 1 }}>
+          <View style={styles.modalContent}>
             {renderModalContent()}
           </View>
         </SafeAreaView>
       </Modal>
-
     </View>
   );
 };
@@ -176,99 +301,271 @@ export default Home;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#F2F2F7',
   },
   container: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 10
   },
-    header: {
+  scrollContent: {
+    paddingBottom: 34,
+  },
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 24,
+    backgroundColor: '#007AFF',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    shadowColor: '#007AFF',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
   },
   profileContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   avatarCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#E8EDF7',
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    position: 'relative',
   },
   logoIcon: {
-    width: '90%',
-    height: '90%',
+    width: '65%',
+    height: '65%',
     resizeMode: 'contain',
+    tintColor: '#FFFFFF',
+  },
+  onlineBadge: {
+    position: 'absolute',
+    bottom: 4,
+    right: 4,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#34C759',
+    borderWidth: 2,
+    borderColor: '#007AFF',
+  },
+  titleContainer: {
+    alignItems: 'center',
+    flex: 1,
+    marginHorizontal: 12,
   },
   titleApp: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#011481',
-    fontFamily: 'Inter-Bold',
-  },
-    title: {
-    marginVertical: 15,
-    fontWeight: '700',
-    fontSize: 20,
-    fontFamily: 'Inter-Bold',
-    color: '#1F2937',
-  },
-  wrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  profileContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  image: {
-    width: 40,
-    height: 40,
-    borderRadius: 50,
-    marginRight: 10,
-  },
-  textContainer: {
-    justifyContent: 'center'
-  },
-  name: {
-    fontSize: 15,
-    fontWeight: 'bold',
-  },
-  role: {
-    fontSize: 13,
-    color: '#777',
-  },
-  logoutIcon: {
-    padding: 10,
-  },
-  titleFirst: {
-    fontSize: 18,
+    fontSize: 32,
     fontWeight: '800',
-    marginBottom: 10,
-    marginHorizontal: 10,
+    color: '#FFFFFF',
+    fontFamily: 'SF-Pro-Display-Bold',
+    letterSpacing: 0.5,
+  },
+  subtitle: {
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontFamily: 'SF-Pro-Text-Regular',
+    marginTop: 2,
+  },
+  menuButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sliderContainer: {
+    marginTop: -16,
+    marginHorizontal: 16,
+    borderRadius: 20,
+    overflow: 'hidden',
+    height: 200,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 6,
+    backgroundColor: '#FFFFFF',
+  },
+  swiperContainer: {
+    borderRadius: 20,
+  },
+  slide: {
+    flex: 1,
+    position: 'relative',
   },
   backImage: {
     width: '100%',
-    height: 250,
+    height: '100%',
     resizeMode: 'cover',
-    borderRadius: 12
+  },
+  slideOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  slideTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '700',
+    fontFamily: 'SF-Pro-Text-Semibold',
+  },
+  slideSubtitle: {
+    color: 'rgba(255, 255, 255, 0.85)',
+    fontSize: 14,
+    marginTop: 4,
+    fontFamily: 'SF-Pro-Text-Regular',
+  },
+  swiperDot: {
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginHorizontal: 3,
+  },
+  swiperActiveDot: {
+    backgroundColor: '#FFFFFF',
+    width: 20,
+    height: 6,
+    borderRadius: 3,
+    marginHorizontal: 3,
+  },
+  swiperPagination: {
+    bottom: 12,
+  },
+  sectionHeader: {
+    paddingHorizontal: 20,
+    marginTop: 32,
+    marginBottom: 20,
+  },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  iconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0, 122, 255, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  iconEmoji: {
+    fontSize: 15,
+  },
+  titleFirst: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#1D1D1F',
+    fontFamily: 'SF-Pro-Display-Bold',
+  },
+  sectionDescription: {
+    fontSize: 13,
+    color: '#8E8E93',
+    fontFamily: 'SF-Pro-Text-Regular',
+    lineHeight: 20,
   },
   itemsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom:55
+    paddingHorizontal: 16,
+    paddingBottom: 32,
+  },
+  footer: {
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 8,
+  },
+  footerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+  },
+  footerText: {
+    fontSize: 13,
+    color: '#8E8E93',
+    fontFamily: 'SF-Pro-Text-Regular',
+  },
+  dotSeparator: {
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: '#C7C7CC',
+    marginHorizontal: 8,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#F2F2F7',
+  },
+  modalHeader: {
+    backgroundColor: '#007AFF',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    overflow: 'hidden',
+    shadowColor: '#007AFF',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  modalHeaderGradient: {
+    paddingTop: 60,
+    paddingBottom: 24,
+  },
+  modalHeaderContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  modalTitleContainer: {
+    flex: 1,
+  },
+  modalTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    fontFamily: 'SF-Pro-Display-Bold',
+  },
+  closeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  modalContent: {
+    flex: 1,
+    paddingTop: 20,
   },
 });
